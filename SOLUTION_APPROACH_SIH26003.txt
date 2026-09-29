@@ -1,0 +1,119 @@
+SAATHI: SOLUTION APPROACH FOR SIH26003
+=======================================
+
+Problem statement
+-----------------
+SIH26003 asks for an AI-based cognitive gaming and memory assistance platform
+for elderly people with dementia in India's North Eastern Region. The solution
+must combine adaptive games, daily memory support, multilingual voice access,
+offline operation, and a caregiver view. Saathi is a working web prototype of
+that complete flow. It is a support tool, not a diagnostic or treatment device.
+
+1. Core product idea
+--------------------
+Saathi gives an older person a calm tablet or phone interface with one clear
+daily screen. The person can see reminders, hear guidance, and play short games
+without a timer. A family caregiver can manage reminders and review in-app
+activity. A health worker can receive a one-use invitation to a read-only view.
+The application continues to work locally when connectivity is unavailable and
+syncs family information when the server is reachable again.
+
+2. Cognitive games and personalization
+--------------------------------------
+There are four three-round games matching the requested domains:
+
+  Memory: view familiar objects and identify one after the preview disappears.
+  Attention: find every instance of a target object in a small grid.
+  Daily routine: place common activities in their correct order.
+  Pattern recognition: choose the next object in a simple sequence.
+
+Each domain has three difficulty levels. The app records the score and level
+after each completed session. Its lightweight online Bayesian learner estimates
+mastery from up to eight recent real sessions in that domain. The estimate uses
+a Beta(2,2) prior and treats a three-round game as three observations:
+
+  mastery = (2 + 3 * sum(session_score / 100)) /
+            (4 + 3 * number_of_sessions_at_current_level)
+
+After at least two sessions at the current level, mastery of 0.75 or above
+moves the next game up one level. Mastery of 0.45 or below moves it down one
+level. Otherwise, the level stays the same. Levels are capped at 1 to 3.
+Sample demo sessions never influence difficulty. This is explainable adaptive
+personalization; the score does not measure a person's clinical condition.
+
+3. Memory assistance and accessible interaction
+------------------------------------------------
+Caregivers can add reminders for medicine, hydration, daily activity, and
+appointments. The patient can mark each reminder done for the day. Completion
+status appears in the caregiver view. The interface uses large touch controls,
+high-contrast text, short instructions, familiar objects, spoken and written
+prompts, and gentle feedback after an incorrect answer. Games have no countdown.
+Browser notifications can appear while the app is open and permission is given;
+closed-app alarms are not guaranteed in this web prototype.
+
+4. Language and voice approach
+------------------------------
+Selecting English, Hindi, or Assamese changes navigation, games, forms,
+dashboard labels, dates, feedback, and guidance. English and Hindi voice
+commands use the browser's speech-recognition API where it is available.
+Examples include starting a memory game or reading reminders. The spoken guide
+uses the device's speech-synthesis voice for the selected language when present.
+Bundled Hindi audio provides offline playback for the main Hindi game prompts
+and default reminder phrases even without a Hindi system voice. Custom reminder
+text can be spoken only if a suitable device voice exists. Touch controls remain
+available when speech recognition or audio is unsupported. Caregivers may add
+optional translations for custom reminder titles; text without a translation
+remains as the caregiver entered it. Assamese interface text needs native-speaker
+review before a real regional rollout.
+
+5. Caregiver insight with a careful interpretation
+--------------------------------------------------
+The caregiver page shows a timeline of game scores, the recent average for each
+domain, the session log, and reminder completion. A trend rule runs only after
+play on at least six different days. It compares the first three of those days
+with the most recent three and flags a drop of more than 20 score points, when
+the earlier average was at least 40. The alert describes lower activity in the
+app and advises a gentle check-in if the caregiver is concerned. It never calls
+the result cognitive decline or a diagnosis. Synthetic sample history is clearly
+labelled, stays on the device, and is separate from real family history.
+
+6. Offline-first full-stack architecture
+----------------------------------------
+Frontend: dependency-free HTML, CSS, and JavaScript. Local storage retains the
+profile, game sessions, reminders, and daily completion checks. A service worker
+caches the application files and main Hindi audio so the core experience reloads
+offline after the first visit.
+
+Backend: a Node.js 24 HTTP API and SQLite database provide optional family
+accounts and synchronization. A family code and passphrase connect devices.
+The client merges game sessions by unique ID, keeps the latest reminder edit,
+and preserves deletion markers so a removed reminder is not revived by another
+device. If the API is unavailable, data remains locally and can sync later.
+
+Security: passphrases use salted PBKDF2 hashes; bearer session tokens and
+health-worker invitation codes are stored as hashes. Invites can be used once
+and expire after seven days. The API enforces a read-only health-worker role.
+The deployed version must run over HTTPS with a protected database volume,
+backups, consent, and a privacy notice before accepting real patient data.
+
+7. Demonstration and proof
+--------------------------
+A useful judge demonstration is: switch to Hindi; hear a game prompt; finish
+a memory game; play again to show the adaptive level; add and complete a
+reminder; open the caregiver dashboard; connect a second device with a family
+code; then disconnect and reload to show offline play. A separate labelled
+sample scenario can show how a lower-activity alert appears without presenting
+fictional scores as real patient data.
+
+8. Validation still required
+----------------------------
+The current build implements the product flow, but it has not established
+clinical benefit. Before real-world use, observe older adults and caregivers
+performing common tasks; measure task completion, mis-taps, comprehension, and
+voice clarity; request clinical review of game content and alert language;
+review Assamese and added regional languages with native speakers; and test
+Android Chrome, iPad Safari, installed offline use, and reminder behavior.
+These results should be presented honestly in the SIH submission.
+
+Key source: https://www.sihbuddy.in/ps/SIH26003
+Implementation plan: SIH26003_PLAN.md in this project.

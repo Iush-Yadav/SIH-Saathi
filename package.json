@@ -1,0 +1,13 @@
+{
+  "name": "saathi-memory-companion",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "test": "node --test test.js companion.test.js"
+  },
+  "engines": {
+    "node": ">=24"
+  }
+}
