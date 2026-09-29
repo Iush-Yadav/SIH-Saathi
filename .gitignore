@@ -1,0 +1,11 @@
+*.sqlite*
+.DS_Store
+.env
+.env.*
+!.env.example
+node_modules/
+dist/
+.netlify/
+*.log
+*.gguf
+voice/*.aiff
