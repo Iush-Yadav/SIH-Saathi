@@ -21,7 +21,7 @@ npm ci
 npm start
 ```
 
-Open [http://127.0.0.1:4173](http://127.0.0.1:4173). Run the checks with `npm test`.
+Open [hamisaathi.vercel.app] to visit site
 
 The local Node server stores shared data in `saathi.sqlite` in this directory. The file is ignored by Git. For a persistent Node deployment, set `PORT`, `HOST`, and optionally `SAATHI_DB` (a writable persistent path), serve over HTTPS, and back up the database. The Netlify deployment uses Functions and Netlify Blobs instead; its family spaces do not share the local SQLite database. A sharing ID is a 128-bit random access secret: anyone with it can read, edit, or delete that space. Share it privately; there is no password recovery or identity verification in this prototype.
 
